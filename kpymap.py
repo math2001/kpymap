@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 import json
+import uuid
 import textwrap
 try:
     import sublime
@@ -9,7 +10,9 @@ except ImportError:
 from os.path import join
 from contextlib import contextmanager
 
-__all__ = ['add', 'context', 'generate', 'reset']
+__all__ = ['add', 'context', 'generate', 'reset', 'get_context', 'get_keybinding']
+
+DEFAULT_ARG_VALUE=uuid.uuid4()
 
 INDENTATION = '  '
 
@@ -46,7 +49,7 @@ class Context:
 
 class Keybinding:
 
-    def __init__(self, keys, command, args=None, context=None):
+    def __init__(self, keys, command, args, context):
         self.keys = keys
         self.command = command
         self.args = args
@@ -87,11 +90,13 @@ class Keymap:
         self.context.append(context)
         return context
 
-    def add_keybinding(self, keys=None, command=None, args=None, context=None, keybinding=None):
-        if context is not None:
-            context = self.context + [context]
-        else:
-            context = self.context + []
+    def add_keybinding(self, keybinding):
+        self.keybindings.append(keybinding)
+
+    def add_keybinding(self, keys=None, command=None, args=None, context=[], keybinding=None):
+        if not isinstance(context, list):
+            context = [context]
+        context = self.context + context
 
         if keybinding is None:
             keybinding = Keybinding(keys, command, args, context)
@@ -112,23 +117,45 @@ class Keymap:
 
 keymap = Keymap()
 
+def to_keybinding(keys, command, args={}, context=[]):
+    if not isinstance(context, list):
+        context = [context]
+    context = self.context + context
+
+    return Keybinding(keys, command, args, context)
+
+def to_context(key, operator, operand=DEFAULT_ARG_VALUE, match_all=None):
+    if operand == DEFAULT_ARG_VALUE:
+        operand = operator
+        operator = None
+
+    return Context(key, operator, operand, match_all)
+
+
 # APIS functions
 
 def reset():
     keymap.__init__()
 
 def add(*args, **kwargs):
-    keymap.add_keybinding(*args, **kwargs)
+    return keymap.add_keybinding(*args, **kwargs)
 
-def generate():
-    if sublime is None:
+def get_keybinding(*args, **kwargs):
+    return to_keybinding(*args, **kwargs)
+
+def get_context(*args, **kwargs):
+    return to_context(*args, **kwargs)
+
+def generate(to_stdout=False):
+    string = keymap.to_keymap()
+    if to_stdout is True or sublime is None:
         # the file is build, not run by ST, so just output the JSON
-        return output(keymap.to_keymap())
+        return output(string)
 
     keymap_file = join(sublime.packages_path(), 'User',
                        'Default ({}).sublime-keymap'.format(sublime.platform().title()))
     with open(keymap_file, 'w', encoding='utf-8') as fp:
-        fp.write(keymap.to_keymap())
+        fp.write(string)
     output('Kpymap: wrote', keymap_file)
 
 @contextmanager
@@ -137,3 +164,18 @@ def context(*args, **kwargs):
     yield
     keymap.remove_context(actual_context)
 
+def main():
+    class contexts:
+        word_before = get_context('preceding_text', 'regex_contains', '[\\w\']$')
+        textplain = get_context('selector', 'text.plain')
+
+
+
+    add(['2'], 'insert', {'characters': 'é'}, context=[contexts.word_before, contexts.textplain])
+    add(['2'], 'insert', {'characters': 'é'}, context=contexts.textplain)
+    with context('from', 'with', 'block'):
+        pass
+    output(keymap.to_keymap())
+
+if __name__ == '__main__':
+    main()
