@@ -1,11 +1,15 @@
 # -*- encoding: utf-8 -*-
 
 import json
+import textwrap
 from contextlib import contextmanager
 
 __all__ = ['add', 'context', 'generate']
 
 INDENTATION = '  '
+
+def dump(string, *args, **kwargs):
+    return json.dumps(string, ensure_ascii=False, *args, **kwargs)
 
 class Context:
 
@@ -17,20 +21,18 @@ class Context:
 
     def to_keymap(self):
         """converts to proper JSON for a .sublime-keymap"""
-        context = {
-            'key': self.key,
-        }
+        string = '{"key": ' + dump(self.key)
+
         if self.operator != 'equal':
-            context['operator'] = self.operator
+            string += ', "operator": ' + dump(self.operator)
 
         if self.operand is not True:
-            context['operand'] = self.operand
+            string += ', "operand": ' + dump(self.operand)
 
         if self.match_all is not False:
-            context['match_all'] = self.match_all
+            string += ', "match_all": ' + dump(self.match_all)
 
-        return context
-        return json.dumps(context, ensure_ascii=False)
+        return string + '}'
 
 class Keybinding:
 
@@ -42,18 +44,19 @@ class Keybinding:
 
     def to_keymap(self):
         """converts to proper JSON for a .sublime-keymap"""
-        keybinding = {
-            'keys': self.keys,
-            'command': self.command
-        }
+        string = '{\n'
+        string += INDENTATION + '"keys": ' + dump(self.keys) + ',\n'
+        string += INDENTATION + '"command": ' + dump(self.command)
         if self.args is not None:
-            keybinding['args'] = self.args
+            string += ',\n' + INDENTATION + '"args": ' + \
+                textwrap.indent(dump(self.args, indent=INDENTATION), INDENTATION)[len(INDENTATION):]
 
         if self.context != []:
-            keybinding['context'] = list(map(lambda k: k.to_keymap(), self.context))
-            # keybinding['context'] = self.context
+            string += ',\n' + INDENTATION + '"context": [\n'
+            string += ',\n'.join([(INDENTATION * 2) + context.to_keymap() for context in self.context]) + '\n'
+            string += INDENTATION + ']'
 
-        return json.dumps(keybinding, ensure_ascii=False, indent=INDENTATION)
+        return string + '\n}'
 
 class Keymap:
 
@@ -89,7 +92,7 @@ class Keymap:
 
     def to_keymap(self):
         string = '[\n'
-        string += ',\n'.join(map(lambda c: c.to_keymap(), self.keybindings))
+        string += textwrap.indent(',\n'.join(map(lambda c: c.to_keymap(), self.keybindings)), INDENTATION)
         string += '\n]'
         return string
 
@@ -121,4 +124,5 @@ def main():
 
     generate()
 
-main()
+if __name__ == '__main__':
+    main()
