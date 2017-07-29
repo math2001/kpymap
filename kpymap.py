@@ -2,18 +2,28 @@
 
 import json
 import textwrap
+try:
+    import sublime
+except ImportError:
+    sublime = None
+from os.path import join
 from contextlib import contextmanager
 
-__all__ = ['add', 'context', 'generate']
+__all__ = ['add', 'context', 'generate', 'reset']
 
 INDENTATION = '  '
 
 def dump(string, *args, **kwargs):
     return json.dumps(string, ensure_ascii=False, *args, **kwargs)
 
+def output(*args, **kwargs):
+    # used to by pass git hook
+    # CSW: ignore
+    print(*args, **kwargs)
+
 class Context:
 
-    def __init__(self, key, operand, operator, match_all):
+    def __init__(self, key, operator, operand, match_all):
         self.key = key
         self.operand = operand
         self.operator = 'equal' if operator is None else operator
@@ -64,12 +74,16 @@ class Keymap:
         self.keybindings = []
         self.context = []
 
-    def add_context(self, key=None, operand=None, operator=None, match_all=None, context=None):
+    def add_context(self, key=None, operator=None, operand=None, match_all=None, context=None):
         if context is None:
-            context = Context(key, operand, operator, match_all)
+            context = Context(key, operator, operand, match_all)
         elif key is not None or operand is not None or operator is not None or match_all is not None:
             raise ValueError('Tried to add context by passing an existing one but specified '
                              'arguments with it')
+        elif operator is not None and operand is None:
+            operator = operand
+            operand = None
+
         self.context.append(context)
         return context
 
@@ -98,13 +112,24 @@ class Keymap:
 
 keymap = Keymap()
 
+# APIS functions
+
+def reset():
+    keymap.__init__()
+
 def add(*args, **kwargs):
     keymap.add_keybinding(*args, **kwargs)
 
 def generate():
-    string = keymap.to_keymap()
-    # CSW: ignore
-    print(string)
+    if sublime is None:
+        # the file is build, not run by ST, so just output the JSON
+        return output(keymap.to_keymap())
+
+    keymap_file = join(sublime.packages_path(), 'User',
+                       'Default ({}).sublime-keymap'.format(sublime.platform().title()))
+    with open(keymap_file, 'w', encoding='utf-8') as fp:
+        fp.write(keymap.to_keymap())
+    output('Kpymap: wrote', keymap_file)
 
 @contextmanager
 def context(*args, **kwargs):
@@ -112,17 +137,3 @@ def context(*args, **kwargs):
     yield
     keymap.remove_context(actual_context)
 
-def main():
-    add(['ctrl+a'], 'select_all')
-    add(keys=['ctrl+,'], command='open_file', args={
-        'path': 'whatever'
-    })
-
-    with context('selector', 'source.python', match_all=True), context('test', 'hello'):
-        add(['ctrl+a'], 'select_all')
-        add(['.', '.'], 'insert_snippet', {'content': 'self.'})
-
-    generate()
-
-if __name__ == '__main__':
-    main()
