@@ -77,34 +77,17 @@ class Keymap:
         self.keybindings = []
         self.context = []
 
-    def add_context(self, key=None, operator=None, operand=None, match_all=None, context=None):
-        if context is None:
-            context = Context(key, operator, operand, match_all)
-        elif key is not None or operand is not None or operator is not None or match_all is not None:
-            raise ValueError('Tried to add context by passing an existing one but specified '
-                             'arguments with it')
-        elif operator is not None and operand is None:
-            operator = operand
-            operand = None
-
+    def add_context(self, context):
         self.context.append(context)
         return context
 
     def add_keybinding(self, keybinding):
         self.keybindings.append(keybinding)
 
-    def add_keybinding(self, keys=None, command=None, args=None, context=[], keybinding=None):
-        if not isinstance(context, list):
-            context = [context]
-        context = self.context + context
-
-        if keybinding is None:
-            keybinding = Keybinding(keys, command, args, context)
-        elif keys is not None or command is not None or args is not None or context is not None:
-            raise ValueError('Tried to add keybinding by passing an existing one but specified '
-                             'arguments too')
-
+    def add_keybinding(self, keybinding):
+        keybinding.context = self.context + keybinding.context
         self.keybindings.append(keybinding)
+        return keybinding
 
     def remove_context(self, context):
         self.context.remove(context)
@@ -120,11 +103,12 @@ keymap = Keymap()
 def to_keybinding(keys, command, args={}, context=[]):
     if not isinstance(context, list):
         context = [context]
-    context = self.context + context
 
     return Keybinding(keys, command, args, context)
 
-def to_context(key, operator, operand=DEFAULT_ARG_VALUE, match_all=None):
+def to_context(key, operator=None, operand=DEFAULT_ARG_VALUE, match_all=None):
+    if isinstance(key, Context):
+        return key
     if operand == DEFAULT_ARG_VALUE:
         operand = operator
         operator = None
@@ -138,7 +122,7 @@ def reset():
     keymap.__init__()
 
 def add(*args, **kwargs):
-    return keymap.add_keybinding(*args, **kwargs)
+    return keymap.add_keybinding(to_keybinding(*args, **kwargs))
 
 def get_keybinding(*args, **kwargs):
     return to_keybinding(*args, **kwargs)
@@ -160,7 +144,7 @@ def generate(to_stdout=False):
 
 @contextmanager
 def context(*args, **kwargs):
-    actual_context = keymap.add_context(*args, **kwargs)
+    actual_context = keymap.add_context(to_context(*args, **kwargs))
     yield
     keymap.remove_context(actual_context)
 
@@ -177,5 +161,21 @@ def main():
         pass
     output(keymap.to_keymap())
 
+def run():
+    class contexts:
+        word_before = get_context('preceding_text', 'regex_contains', '[\\w\']$')
+        textplain = get_context('selector', 'text.plain')
+
+    with context('dictionnary', 'Packages/Language - French - Français/fr_FR.dic'),\
+         context(contexts.textplain):
+
+        add(['2'], 'insert', {'characters': 'é'}, context=[contexts.word_before, contexts.textplain])
+        add(['2'], 'insert', {'characters': 'é'}, context=contexts.textplain)
+
+
+    return generate(to_stdout=True)
+
+
 if __name__ == '__main__':
-    main()
+    (Context('a', 'b', 'c', False) == Context('a', 'b', 'c', False))
+    run()
