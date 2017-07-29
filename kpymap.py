@@ -47,6 +47,15 @@ class Context:
 
         return string + '}'
 
+    def __eq__(self, obj):
+        if not isinstance(obj, Context):
+            return False
+
+        return self.key == obj.key \
+           and self.operator == obj.operator \
+           and self.operand == obj.operand \
+           and self.match_all == obj.match_all
+
 class Keybinding:
 
     def __init__(self, keys, command, args, context):
@@ -70,6 +79,15 @@ class Keybinding:
             string += INDENTATION + ']'
 
         return string + '\n}'
+
+    def __eq__(self, obj):
+        if not isinstance(obj, Keybinding):
+            return False
+
+        return self.keys == obj.keys \
+           and self.command == obj.command \
+           and self.args == obj.args \
+           and self.context == obj.context
 
 class Keymap:
 
@@ -114,7 +132,6 @@ def to_context(key, operator=None, operand=DEFAULT_ARG_VALUE, match_all=None):
         operator = None
 
     return Context(key, operator, operand, match_all)
-
 
 # APIS functions
 
@@ -177,5 +194,4 @@ def run():
 
 
 if __name__ == '__main__':
-    (Context('a', 'b', 'c', False) == Context('a', 'b', 'c', False))
     run()
