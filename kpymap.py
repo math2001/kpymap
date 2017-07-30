@@ -9,12 +9,13 @@ except ImportError:
     sublime = None
 from os.path import join
 from contextlib import contextmanager
+from collections import OrderedDict
 
 __all__ = ['add', 'context', 'generate', 'reset', 'get_context', 'get_keybinding']
 
 DEFAULT_ARG_VALUE=uuid.uuid4()
 
-INDENTATION = '  '
+INDENTATION = '    '
 
 def dump(string, *args, **kwargs):
     return json.dumps(string, ensure_ascii=False, *args, **kwargs)
@@ -37,6 +38,10 @@ def error_message(message, printout=False):
     else:
         output(message)
     return message
+
+def remove_duplicate(seq):
+    seen = set()
+    return [x for x in seq if x not in seen and not seen.add(x)]
 
 class Context:
 
@@ -87,7 +92,7 @@ class Keybinding:
     def __init__(self, keys, command, args, context):
         self.keys = keys
         self.command = command
-        self.args = args
+        self.args = OrderedDict(args)
         self.context = context
 
     def to_keymap(self):
@@ -100,9 +105,10 @@ class Keybinding:
             string += ',\n' + INDENTATION + '"args": ' + \
                 textwrap.indent(dump(self.args, indent=INDENTATION), INDENTATION)[len(INDENTATION):]
 
-        if self.context != set():
+        if self.context != []:
             string += ',\n' + INDENTATION + '"context": [\n'
-            string += ',\n'.join([(INDENTATION * 2) + context.to_keymap() for context in self.context]) + '\n'
+            string += ',\n'.join([(INDENTATION * 2) + context.to_keymap() for context in
+                                 remove_duplicate(self.context)]) + '\n'
             string += INDENTATION + ']'
 
         return string + '\n}'
@@ -116,13 +122,12 @@ class Keybinding:
            and self.args == obj.args \
            and self.context == obj.context
 
-
     def __repr__(self):
         return self.__str__()
 
     def __str__(self):
         args = '' if self.args == {} else ' args=' + repr(self.args)
-        context = '' if self.context == set() else ' context=' + repr(self.context)
+        context = '' if self.context == [] else ' context=' + repr(self.context)
         return '<Keybinding keys={!r} command={!r}{}{}>'.format(self.keys, self.command, args,
                                                                 context)
 
@@ -130,7 +135,7 @@ class Keymap:
 
     def __init__(self):
         self.keybindings = []
-        self.context = set()
+        self.context = []
         self.keymap_generated = False
         self.shown_error_already = False
 
@@ -144,13 +149,13 @@ class Keymap:
     def add_context(self, context):
         self.error_if_generated("You shouldn't add a context after JSON has been generated "
                                 "since it is going to be simply ignored.")
-        self.context.add(context)
+        self.context.append(context)
         return context
 
     def add_keybinding(self, keybinding):
         self.error_if_generated("You shouldn't add a keybinding after JSON has been generated "
                                 "since it is going to be simply ignored.")
-        keybinding.context = self.context | keybinding.context
+        keybinding.context = self.context + keybinding.context
         self.keybindings.append(keybinding)
         return keybinding
 
@@ -170,10 +175,9 @@ keymap = Keymap()
 
 def to_keybinding(keys, command, args={}, context=[]):
     if not isinstance(context, list):
-        context = set([context])
-    context = set(context)
+        context = [context]
     if isinstance(args, Context):
-        context = set([args])
+        context = [args]
         args = {}
 
     if isinstance(args, list) and every(args, lambda c: isinstance(c, Context)):
@@ -193,6 +197,12 @@ def to_context(key, operator=None, operand=DEFAULT_ARG_VALUE, match_all=None):
 
 # APIS functions
 
+@contextmanager
+def context(*args, **kwargs):
+    actual_context = keymap.add_context(to_context(*args, **kwargs))
+    yield
+    keymap.remove_context(actual_context)
+
 def reset():
     keymap.__init__()
 
@@ -205,38 +215,14 @@ def get_keybinding(*args, **kwargs):
 def get_context(*args, **kwargs):
     return to_context(*args, **kwargs)
 
-def generate(to_stdout=False):
+def generate(return_json=False):
     string = keymap.to_keymap()
-    if to_stdout is True or sublime is None:
+    if return_json is True or sublime is None:
         # the file is build, not run by ST, so just output the JSON
-        return output(string)
+        return string
 
     keymap_file = join(sublime.packages_path(), 'User',
                        'Default ({}).sublime-keymap'.format(sublime.platform().title()))
     with open(keymap_file, 'w', encoding='utf-8') as fp:
         fp.write(string)
     output('Kpymap: wrote', keymap_file)
-
-@contextmanager
-def context(*args, **kwargs):
-    actual_context = keymap.add_context(to_context(*args, **kwargs))
-    yield
-    keymap.remove_context(actual_context)
-
-def run():
-    class contexts:
-        word_before = get_context('preceding_text', 'regex_contains', '[\\w\']$')
-        textplain = get_context('selector', 'text.plain')
-
-    with context('dictionnary', 'Packages/Language - French - Français/fr_FR.dic'),\
-         context(contexts.textplain):
-
-        add(['2'], 'insert', {'characters': 'é'}, context=[contexts.word_before, contexts.textplain])
-        add(['2'], 'insert', {'characters': 'é'}, context=contexts.textplain)
-
-
-    return generate(to_stdout=True)
-
-
-if __name__ == '__main__':
-    run()
