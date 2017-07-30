@@ -108,6 +108,16 @@ class Keybinding:
            and self.args == obj.args \
            and self.context == obj.context
 
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __str__(self):
+        args = '' if self.args == {} else ' args=' + repr(self.args)
+        context = '' if self.context == set() else ' context=' + repr(self.context)
+        return '<Keybinding keys={!r} command={!r}{}{}>'.format(self.keys, self.command, args,
+                                                                context)
+
 class Keymap:
 
     def __init__(self):
