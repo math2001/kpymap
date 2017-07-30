@@ -25,10 +25,10 @@ def output(*args, **kwargs):
     print(*args, **kwargs)
 
 def every(iterable, func):
-	for item in iterable:
-		if not func(item):
-			return False
-	return True
+    for item in iterable:
+        if not func(item):
+            return False
+    return True
 
 class Context:
 
@@ -65,6 +65,15 @@ class Context:
     def __hash__(self):
         return hash((self.key, self.operator, self.operand, self.match_all))
 
+    def __repr__(self):
+        return self.__str__()
+
+    def __str__(self):
+        operator = '' if self.operator == 'equal' else ' operator=' + repr(self.operator)
+        match_all = '' if self.match_all == False else ' match_all=' + repr(self.match_all)
+        return '<Context key={!r}{} operand={!r}{}>'.format(self.key, operator, self.operand,
+                                                            match_all)
+
 class Keybinding:
 
     def __init__(self, keys, command, args, context):
@@ -78,6 +87,7 @@ class Keybinding:
         string = '{\n'
         string += INDENTATION + '"keys": ' + dump(self.keys) + ',\n'
         string += INDENTATION + '"command": ' + dump(self.command)
+
         if self.args != {}:
             string += ',\n' + INDENTATION + '"args": ' + \
                 textwrap.indent(dump(self.args, indent=INDENTATION), INDENTATION)[len(INDENTATION):]
@@ -132,12 +142,12 @@ def to_keybinding(keys, command, args={}, context=[]):
         context = set([context])
     context = set(context)
     if isinstance(args, Context):
-    	context = set([args])
-    	args = {}
+        context = set([args])
+        args = {}
 
     if isinstance(args, list) and every(args, lambda c: isinstance(c, Context)):
-    	context = args
-    	args = {}
+        context = args
+        args = {}
 
     return Keybinding(keys, command, args, context)
 
@@ -181,19 +191,6 @@ def context(*args, **kwargs):
     actual_context = keymap.add_context(to_context(*args, **kwargs))
     yield
     keymap.remove_context(actual_context)
-
-def main():
-    class contexts:
-        word_before = get_context('preceding_text', 'regex_contains', '[\\w\']$')
-        textplain = get_context('selector', 'text.plain')
-
-
-
-    add(['2'], 'insert', {'characters': 'é'}, context=[contexts.word_before, contexts.textplain])
-    add(['2'], 'insert', {'characters': 'é'}, context=contexts.textplain)
-    with context('from', 'with', 'block'):
-        pass
-    output(keymap.to_keymap())
 
 def run():
     class contexts:
