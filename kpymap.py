@@ -92,7 +92,7 @@ class Keybinding:
     def __init__(self, keys, command, args, context):
         self.keys = list(keys)
         self.command = command
-        self.args = OrderedDict(args)
+        self.args = args
         self.context = context
 
     def to_keymap(self):
@@ -102,6 +102,7 @@ class Keybinding:
         string += INDENTATION + '"command": ' + dump(self.command)
 
         if self.args != {}:
+            self.args = OrderedDict((key, self.args[key]) for key in sorted(self.args.keys()))
             string += ',\n' + INDENTATION + '"args": ' + \
                 textwrap.indent(dump(self.args, indent=INDENTATION), INDENTATION)[len(INDENTATION):]
 

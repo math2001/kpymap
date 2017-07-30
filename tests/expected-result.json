@@ -3,8 +3,8 @@
         "keys": ["ctrl+k", "ctrl+c"],
         "command": "show_panel",
         "args": {
-            "toggle": true,
-            "panel": "console"
+            "panel": "console",
+            "toggle": true
         }
     },
     {
