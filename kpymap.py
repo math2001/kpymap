@@ -30,6 +30,14 @@ def every(iterable, func):
             return False
     return True
 
+def error_message(message, printout=False):
+    message = 'Kpymap (error) ]> ' + message
+    if sublime and not printout:
+        sublime.error_message(message)
+    else:
+        output(message)
+    return message
+
 class Context:
 
     def __init__(self, key, operator, operand, match_all):
@@ -123,15 +131,25 @@ class Keymap:
     def __init__(self):
         self.keybindings = []
         self.context = set()
+        self.keymap_generated = False
+        self.shown_error_already = False
+
+    def error_if_generated(self, message):
+        if not self.keymap_generated:
+            return
+
+        error_message(message, printout=self.shown_error_already)
+        self.shown_error_already = True
 
     def add_context(self, context):
+        self.error_if_generated("You shouldn't add a context after JSON has been generated "
+                                "since it is going to be simply ignored.")
         self.context.add(context)
         return context
 
     def add_keybinding(self, keybinding):
-        self.keybindings.append(keybinding)
-
-    def add_keybinding(self, keybinding):
+        self.error_if_generated("You shouldn't add a keybinding after JSON has been generated "
+                                "since it is going to be simply ignored.")
         keybinding.context = self.context | keybinding.context
         self.keybindings.append(keybinding)
         return keybinding
@@ -140,6 +158,7 @@ class Keymap:
         self.context.remove(context)
 
     def to_keymap(self):
+        self.keymap_generated = True
         string = '[\n'
         string += textwrap.indent(',\n'.join(map(lambda c: c.to_keymap(), self.keybindings)), INDENTATION)
         string += '\n]'
