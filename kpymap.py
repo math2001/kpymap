@@ -24,6 +24,12 @@ def output(*args, **kwargs):
     # CSW: ignore
     print(*args, **kwargs)
 
+def every(iterable, func):
+	for item in iterable:
+		if not func(item):
+			return False
+	return True
+
 class Context:
 
     def __init__(self, key, operator, operand, match_all):
@@ -123,8 +129,15 @@ keymap = Keymap()
 
 def to_keybinding(keys, command, args={}, context=[]):
     if not isinstance(context, list):
-        context = [context]
+        context = set([context])
     context = set(context)
+    if isinstance(args, Context):
+    	context = set([args])
+    	args = {}
+
+    if isinstance(args, list) and every(args, lambda c: isinstance(c, Context)):
+    	context = args
+    	args = {}
 
     return Keybinding(keys, command, args, context)
 
