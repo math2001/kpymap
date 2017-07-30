@@ -90,7 +90,7 @@ class Context:
 class Keybinding:
 
     def __init__(self, keys, command, args, context):
-        self.keys = keys
+        self.keys = list(keys)
         self.command = command
         self.args = OrderedDict(args)
         self.context = context
@@ -173,18 +173,37 @@ class Keymap:
 
 keymap = Keymap()
 
-def to_keybinding(keys, command, args={}, context=[]):
-    if not isinstance(context, list):
-        context = [context]
-    if isinstance(args, Context):
-        context = [args]
-        args = {}
+def to_keybinding(*args):
 
-    if isinstance(args, list) and every(args, lambda c: isinstance(c, Context)):
-        context = args
-        args = {}
+    keys = []
+    command = None
+    arguments = None
+    context = []
 
-    return Keybinding(keys, command, args, context)
+    if isinstance(args[-1], str):
+        keys = args[:-1]
+        command = args[-1]
+    else:
+        length = len(args)
+        just_str = True
+        for i, arg in enumerate(args):
+            if isinstance(arg, str) and just_str:
+                keys.append(arg)
+                continue
+            just_str = False
+            if isinstance(arg, Context):
+                context.append(arg)
+            elif arguments is None:
+                arguments = arg
+            else:
+                raise TypeError("This argument isn't valid {!r}".format(arg))
+
+        command = keys.pop()
+
+    if arguments is None:
+        arguments = {}
+
+    return Keybinding(keys, command, arguments, context)
 
 def to_context(key, operator=None, operand=DEFAULT_ARG_VALUE, match_all=None):
     if isinstance(key, Context):
@@ -226,3 +245,4 @@ def generate(return_json=False):
     with open(keymap_file, 'w', encoding='utf-8') as fp:
         fp.write(string)
     output('Kpymap: wrote', keymap_file)
+
