@@ -78,11 +78,11 @@ class Keybinding:
         string = '{\n'
         string += INDENTATION + '"keys": ' + dump(self.keys) + ',\n'
         string += INDENTATION + '"command": ' + dump(self.command)
-        if self.args is not None:
+        if self.args != {}:
             string += ',\n' + INDENTATION + '"args": ' + \
                 textwrap.indent(dump(self.args, indent=INDENTATION), INDENTATION)[len(INDENTATION):]
 
-        if self.context != []:
+        if self.context != set():
             string += ',\n' + INDENTATION + '"context": [\n'
             string += ',\n'.join([(INDENTATION * 2) + context.to_keymap() for context in self.context]) + '\n'
             string += INDENTATION + ']'
