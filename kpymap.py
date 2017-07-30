@@ -31,7 +31,7 @@ def every(iterable, func):
     return True
 
 def error_message(message, printout=False):
-    message = 'Kpymap (error) ]> ' + message
+    message = 'Kpymap (warning) ]> ' + message
     if sublime and not printout:
         sublime.error_message(message)
     else:
@@ -158,6 +158,8 @@ class Keymap:
         self.context.remove(context)
 
     def to_keymap(self):
+        if self.keymap_generated:
+            error_message("In order to improve performance, you should call 'generate()' only once")
         self.keymap_generated = True
         string = '[\n'
         string += textwrap.indent(',\n'.join(map(lambda c: c.to_keymap(), self.keybindings)), INDENTATION)
