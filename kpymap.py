@@ -56,6 +56,9 @@ class Context:
            and self.operand == obj.operand \
            and self.match_all == obj.match_all
 
+    def __hash__(self):
+        return hash((self.key, self.operator, self.operand, self.match_all))
+
 class Keybinding:
 
     def __init__(self, keys, command, args, context):
@@ -93,17 +96,17 @@ class Keymap:
 
     def __init__(self):
         self.keybindings = []
-        self.context = []
+        self.context = set()
 
     def add_context(self, context):
-        self.context.append(context)
+        self.context.add(context)
         return context
 
     def add_keybinding(self, keybinding):
         self.keybindings.append(keybinding)
 
     def add_keybinding(self, keybinding):
-        keybinding.context = self.context + keybinding.context
+        keybinding.context = self.context | keybinding.context
         self.keybindings.append(keybinding)
         return keybinding
 
@@ -121,6 +124,7 @@ keymap = Keymap()
 def to_keybinding(keys, command, args={}, context=[]):
     if not isinstance(context, list):
         context = [context]
+    context = set(context)
 
     return Keybinding(keys, command, args, context)
 
