@@ -1,211 +1,127 @@
 [
     {
-        "keys": ["ctrl+k", "ctrl+c"],
-        "command": "show_panel",
+        "keys": ["ctrl+a"],
+        "command": "command"
+    },
+    {
+        "keys": ["ctrl+b"],
+        "command": "command",
         "args": {
-            "panel": "console",
-            "toggle": true
+            "arg": "value"
         }
     },
     {
-        "keys": ["ctrl+k", "ctrl+d"],
-        "command": "console_cleanr"
-    },
-    {
-        "keys": ["ctrl+k", "ctrl+m"],
-        "command": "toggle_minimap"
-    },
-    {
-        "keys": ["ctrl+k", "ctrl+s"],
-        "command": "toggle_side_bar"
-    },
-    {
-        "keys": ["ctrl+k", "ctrl+o"],
-        "command": "toggle_show_open_files"
-    },
-    {
-        "keys": ["alt+f"],
-        "command": "fold_python_functions",
-        "context": [
-            {"key": "selector", "operand": "source.python", "match_all": true}
-        ]
-    },
-    {
-        "keys": ["alt+e"],
-        "command": "insert",
+        "keys": ["ctrl+e"],
+        "command": "command",
         "args": {
-            "characters": "enumerate($1)"
+            "arg1": "value1",
+            "arg2": "value2"
+        }
+    },
+    {
+        "keys": ["alt+c"],
+        "command": "command",
+        "args": {
+            "arg1": "value1",
+            "arg2": "value2"
         },
         "context": [
-            {"key": "selector", "operand": "source.python", "match_all": true}
+            {"key": "key", "operand": "operand", "match_all": true}
         ]
-    },
-    {
-        "keys": ["ctrl+o"],
-        "command": "markdown_preview",
-        "args": {
-            "parser": "github",
-            "target": "browser"
-        },
-        "context": [
-            {"key": "selector", "operand": "text.html.markdown"}
-        ]
-    },
-    {
-        "keys": [".", "."],
-        "command": "insert",
-        "args": {
-            "characters": "self."
-        },
-        "context": [
-            {"key": "selector", "operand": "source.python - comment - string"}
-        ]
-    },
-    {
-        "keys": ["f8"],
-        "command": "chain",
-        "args": {
-            "commands": [
-                [
-                    "save"
-                ],
-                [
-                    "close_window"
-                ]
-            ]
-        },
-        "context": [
-            {"key": "selector", "operand": "text.git-commit-message"}
-        ]
-    },
-    {
-        "keys": ["<", "-"],
-        "command": "insert",
-        "args": {
-            "characters": "← "
-        }
-    },
-    {
-        "keys": ["-", ">"],
-        "command": "insert",
-        "args": {
-            "characters": "→ "
-        }
-    },
-    {
-        "keys": ["alt+f"],
-        "command": "fold_javascript_functions",
-        "context": [
-            {"key": "selector", "operand": "source.js", "match_all": true}
-        ]
-    },
-    {
-        "keys": ["alt+q"],
-        "command": "change_quotes"
-    },
-    {
-        "keys": ["alt+j"],
-        "command": "swap_line_down"
-    },
-    {
-        "keys": ["alt+k"],
-        "command": "swap_line_up"
-    },
-    {
-        "keys": ["alt+l"],
-        "command": "indent"
-    },
-    {
-        "keys": ["alt+h"],
-        "command": "unindent"
-    },
-    {
-        "keys": ["ctrl+r"],
-        "command": "permute_selection",
-        "context": [
-            {"key": "num_selections", "operand": 2}
-        ]
-    },
-    {
-        "keys": ["ctrl+alt+p"],
-        "command": "project_manager",
-        "args": {
-            "action": "switch"
-        }
-    },
-    {
-        "keys": ["alt+p"],
-        "command": "project_manager",
-        "args": {
-            "action": "new"
-        }
-    },
-    {
-        "keys": ["ctrl+t"],
-        "command": "title_case"
     },
     {
         "keys": ["ctrl+u"],
-        "command": "upper_case"
-    },
-    {
-        "keys": ["ctrl+l"],
-        "command": "lower_case"
-    },
-    {
-        "keys": ["2"],
-        "command": "insert",
+        "command": "command",
         "args": {
-            "characters": "é"
+            "arg1": "value1",
+            "arg2": "value2"
         },
         "context": [
-            {"key": "dictionary", "operand": "Packages/Language - French - Français/fr_FR.dic"},
-            {"key": "selector", "operand": "text.plain"},
-            {"key": "preceding_text", "operator": "regex_contains", "operand": "[\\w']$"}
+            {"key": "key", "operator": "operator", "operand": "operand"}
         ]
     },
     {
-        "keys": ["7"],
-        "command": "insert",
+        "keys": ["ctrl+t"],
+        "command": "command",
         "args": {
-            "characters": "è"
+            "arg1": "value1",
+            "arg2": "value2"
         },
         "context": [
-            {"key": "dictionary", "operand": "Packages/Language - French - Français/fr_FR.dic"},
-            {"key": "selector", "operand": "text.plain"}
+            {"key": "key", "operand": "operand", "match_all": true},
+            {"key": "key"}
         ]
     },
     {
-        "keys": ["e", "e"],
-        "command": "insert",
+        "keys": ["ctrl+alt+b"],
+        "command": "ecommand",
         "args": {
-            "characters": "ée"
-        },
+            "arg": "value"
+        }
+    },
+    {
+        "keys": ["ctrl+b", "c"],
+        "command": "command",
+        "args": {
+            "arg1": "value1",
+            "arg2": "value2"
+        }
+    },
+    {
+        "keys": ["ctrl+c", "alt+h"],
+        "command": "command",
         "context": [
-            {"key": "dictionary", "operand": "Packages/Language - French - Français/fr_FR.dic"},
-            {"key": "selector", "operand": "text.plain"}
+            {"key": "key", "operand": "operand"}
         ]
     },
     {
-        "keys": ["ctrl+0"],
-        "command": "insert",
+        "keys": ["ctrl+b", "c"],
+        "command": "command",
         "args": {
-            "characters": "à"
+            "arg1": "value1",
+            "arg2": "value2"
         },
         "context": [
-            {"key": "dictionary", "operand": "Packages/Language - French - Français/fr_FR.dic"},
-            {"key": "selector", "operand": "text.plain"}
+            {"key": "key", "operand": "operand"}
         ]
     },
     {
-        "keys": ["ctrl+7"],
-        "command": "insert",
-        "args": {
-            "characters": "è"
-        },
+        "keys": [":", ")"],
+        "command": "command",
         "context": [
-            {"key": "dictionary", "operand": "Packages/Language - French - Français/fr_FR.dic"},
-            {"key": "selector", "operand": "text.plain"}
+            {"key": "key", "operator": "operator", "operand": "operand"},
+            {"key": "key1", "operand": "operand"}
+        ]
+    },
+    {
+        "keys": ["alt+r"],
+        "command": "command",
+        "context": [
+            {"key": "key", "operator": "operator", "operand": "operand"},
+            {"key": "key2", "operand": "operand"},
+            {"key": "key3", "operand": "operand"}
+        ]
+    },
+    {
+        "keys": ["whatever"],
+        "command": "command",
+        "context": [
+            {"key": "python", "operator": "is", "operand": "awesome"}
+        ]
+    },
+    {
+        "keys": ["whatever2"],
+        "command": "command2",
+        "context": [
+            {"key": "python", "operator": "is", "operand": "awesome"}
+        ]
+    },
+    {
+        "keys": ["hello"],
+        "command": "world",
+        "context": [
+            {"key": "python", "operator": "is", "operand": "awesome"},
+            {"key": "key2", "operand": "hey!"}
         ]
     }
 ]

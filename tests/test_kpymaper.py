@@ -13,57 +13,33 @@ def output(*args, **kwargs):
 from kpymap import *
 reset()
 
-class contexts:
-    word_before = get_context('preceding_text', 'regex_contains', '[\\w\']$')
-    iswidget = get_context('setting.is_widget')
-    javascript = get_context('selector', 'source.js', match_all=True)
-    python = get_context('selector', 'source.python', match_all=True)
 
-add('ctrl+k', 'ctrl+c', 'show_panel', {'panel': 'console', 'toggle': True})
-add('ctrl+k', 'ctrl+d', 'console_cleanr')
-add('ctrl+k', 'ctrl+m', 'toggle_minimap')
-add('ctrl+k', 'ctrl+s', 'toggle_side_bar')
-add('ctrl+k', 'ctrl+o', 'toggle_show_open_files')
+# ----------------------------------------
 
-with context(contexts.python):
-    add('alt+f', 'fold_python_functions')
-    add('alt+e', 'insert', {'characters': 'enumerate($1)'})
+add('ctrl+a', 'command')
 
-with context('selector', 'text.html.markdown'):
-    add('ctrl+o', 'markdown_preview', {'parser': 'github', 'target': 'browser'})
+add('ctrl+b', 'command', {'arg': 'value'})
+add('ctrl+e', 'command', {'arg1': 'value1', 'arg2': 'value2'})
 
-add('.', '.', 'insert', {'characters': 'self.'}, get_context('selector', 'source.python - comment - string'))
+add('alt+c', 'command', {'arg1': 'value1', 'arg2': 'value2'}, get_context('key', 'operand', match_all=True))
+add('ctrl+u', 'command', {'arg1': 'value1', 'arg2': 'value2'}, get_context('key', 'operator', 'operand', False))
+add('ctrl+t', 'command', {'arg1': 'value1', 'arg2': 'value2'}, get_context('key', 'operand', match_all=True), get_context('key'))
 
-add('f8', 'chain', {'commands': [["save"], ["close_window"]]},
-    get_context('selector', 'text.git-commit-message'))
+add('ctrl+alt+b', 'e' 'command', {'arg': 'value'})
+add('ctrl+b', 'c', 'command', {'arg1': 'value1', 'arg2': 'value2'})
+add('ctrl+c', 'alt+h', 'command', get_context('key', 'operand'))
+add('ctrl+b', 'c', 'command', {'arg1': 'value1', 'arg2': 'value2'}, get_context('key', 'operand'))
 
-add('<', '-', 'insert', {'characters': '← '})
-add('-', '>', 'insert', {'characters': '→ '})
+with context('key', 'operator', 'operand', False):
+    add(':', ')', 'command', get_context('key1', 'operand'))
+    add('alt+r', 'command', get_context('key2', 'operand'), get_context('key3', 'operand'))
 
-add('alt+f', 'fold_javascript_functions', contexts.javascript)
-add('alt+q', 'change_quotes')
+context1 = get_context('python', 'is', 'awesome')
 
-add('alt+j', 'swap_line_down')
-add('alt+k', 'swap_line_up')
-add('alt+l', 'indent')
-add('alt+h', 'unindent')
-
-add('ctrl+r', 'permute_selection', get_context('num_selections', 2))
-add('ctrl+alt+p', 'project_manager', {'action': 'switch'})
-add('alt+p', 'project_manager', {'action': 'new'})
-
-add('ctrl+t', 'title_case')
-add('ctrl+u', 'upper_case')
-add('ctrl+l', 'lower_case')
-
-with context('dictionary', 'equal', 'Packages/Language - French - Français/fr_FR.dic'), \
-     context('selector', 'equal', 'text.plain'):
-
-    add('2', 'insert', {'characters': 'é'}, contexts.word_before)
-    add('7', 'insert', {'characters': 'è'})
-    add('e', 'e', 'insert', {'characters': 'ée'})
-    add('ctrl+0', 'insert', {'characters': 'à'})
-    add('ctrl+7', 'insert', {'characters': 'è'})
+with context(context1):
+    add('whatever', 'command', context1)
+    add('whatever2', 'command2', get_context('python', 'is', 'awesome'))
+    add('hello', 'world', get_context('key2', 'hey!'))
 
 # ----------------------------------------
 
