@@ -23,7 +23,7 @@ add('ctrl+e', 'command', {'arg1': 'value1', 'arg2': 'value2'})
 
 add('alt+c', 'command', {'arg1': 'value1', 'arg2': 'value2'}, get_context('key', 'operand', match_all=True))
 add('ctrl+u', 'command', {'arg1': 'value1', 'arg2': 'value2'}, get_context('key', 'operator', 'operand', False))
-add('ctrl+t', 'command', {'arg1': 'value1', 'arg2': 'value2'}, get_context('key', 'operand', match_all=True), get_context('key'))
+add('ctrl+t', 'command', {'arg1': 'value1', 'arg2': 'value2'}, get_context('key', 'operand', match_all=True), get_context('keyalone'))
 
 add('ctrl+alt+b', 'e' 'command', {'arg': 'value'})
 add('ctrl+b', 'c', 'command', {'arg1': 'value1', 'arg2': 'value2'})

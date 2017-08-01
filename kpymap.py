@@ -48,8 +48,8 @@ class Context:
     def __init__(self, key, operator, operand, match_all):
         self.key = key
         self.operand = operand
-        self.operator = 'equal' if operator is None else operator
-        self.match_all = False if match_all is None else match_all
+        self.operator = operator
+        self.match_all = match_all
 
     def to_keymap(self):
         """converts to proper JSON for a .sublime-keymap"""
@@ -206,12 +206,16 @@ def to_keybinding(*args):
 
     return Keybinding(keys, command, arguments, context)
 
-def to_context(key, operator=None, operand=DEFAULT_ARG_VALUE, match_all=None):
+def to_context(key, operator=DEFAULT_ARG_VALUE, operand=DEFAULT_ARG_VALUE, match_all=False):
     if isinstance(key, Context):
         return key
+
     if operand == DEFAULT_ARG_VALUE:
         operand = operator
-        operator = None
+        operator = DEFAULT_ARG_VALUE
+
+    if operator == DEFAULT_ARG_VALUE:
+        operator = 'equal'
 
     return Context(key, operator, operand, match_all)
 
