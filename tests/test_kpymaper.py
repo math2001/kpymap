@@ -52,7 +52,7 @@ with open('expected-result.json', encoding='utf-8') as fp:
         output("------------")
         output(''.join(difflib.context_diff(expected_result.splitlines(True),
                                             keymaped_generated.splitlines(True),
-                                            fromfile='Python',
-                                            tofile='expected-result.json')))
+                                            fromfile='expected-result.json',
+                                            tofile='Generated output')))
     else:
         output("Yeah!! Everything is still working!")

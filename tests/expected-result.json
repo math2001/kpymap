@@ -49,7 +49,7 @@
         },
         "context": [
             {"key": "key", "operand": "operand", "match_all": true},
-            {"key": "key"}
+            {"key": "keyalone"}
         ]
     },
     {
