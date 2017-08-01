@@ -1,5 +1,19 @@
 # Kpymap
 
+<!-- MarkdownTOC -->
+
+- [API](#api)
+    - [`add\(keys, command\[, args\]\[, context\]\)`](#addkeys-command-args-context)
+    - [`get_context\(key\[, operator\]\[, operand\]\[, match_all\]\)`](#get_contextkey-operator-operand-match_all)
+    - [`context\(...\)`](#context)
+- [Examples](#examples)
+- [Installation](#installation)
+    - [Using package control](#using-package-control)
+    - [Using the command line](#using-the-command-line)
+
+<!-- /MarkdownTOC -->
+
+
 A simple API that allows you to write your Sublime Text keybindings in python.
 
 All it does is provide you a tiny API to add keybindings and convert them into JSON (properly formated for sublime keybindings).
@@ -56,6 +70,32 @@ add(['ctrl+shift+o'], 'open_dir', {'dir': '$packages'}) # works everywhere
 
 And that's it!
 
-### Examples
+## Examples
 
 *Coming soon...*
+
+## Installation
+
+Because it is not available on package control for now, you have to add this repo "manually" to your list.
+
+### Using package control
+
+1. Open up the command palette (<kbd>ctrl+shift+p</kbd>), and find `Package Control: Add Repository`. Then enter the URL of this repo: `https://github.com/math2001/kpymap` in the input field.
+2. Open up the command palette again and find `Package Control: Install Package`, and just search for `kpymap`. (just a normal install)
+
+### Using the command line
+
+```bash
+cd "%APPDATA%\Sublime Text 3\Packages"             # on window
+cd ~/Library/Application\ Support/Sublime\ Text\ 3 # on mac
+cd ~/.config/sublime-text-3                        # on linux
+
+git clone "https://github.com/math2001/kpymap"
+```
+
+> Which solution do I choose?
+
+It depends of your needs:
+
+- If you intend to just use kpymap, then pick the first solution (Package Control), **you'll get automatic update**.
+- On the opposite side, if you want to tweak it, use the second solution. Note that, to get updates, you'll have to `git pull`
