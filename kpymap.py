@@ -33,6 +33,7 @@ def every(iterable, func):
 
 def error_message(message, printout=False):
     message = 'Kpymap (warning) ]> ' + message
+    if sublime: sublime.status_message('Kpymap ]> Warning message displayed in the console!')
     if sublime and not printout:
         sublime.error_message(message)
     else:
