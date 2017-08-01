@@ -7,6 +7,7 @@
     - [`get_context\(key\[, operator\]\[, operand\]\[, match_all\]\)`](#get_contextkey-operator-operand-match_all)
     - [`context\(...\)`](#context)
 - [Examples](#examples)
+    - [`with` block](#with-block)
 - [Installation](#installation)
     - [Using package control](#using-package-control)
     - [Using the command line](#using-the-command-line)
@@ -57,22 +58,130 @@ Note: if only specify 2 arguments (such as `get_context('selector', 'source.pyth
 
 ### `context(...)`
 
-It takes the exact same arguments as [`get_context`](#get_context), but it implements a specific behaviour using `with` blocks. Use it like so:
-
-```python
-with context('selector', 'source.python'):
-    # every shortcut added in this block will have the context(s)
-    # specified above automatically added
-    add(['.', '.'], 'insert', {'characters': 'self.'}) # works only in python
-
-add(['ctrl+shift+o'], 'open_dir', {'dir': '$packages'}) # works everywhere
-```
-
-And that's it!
+It takes the exact same arguments as [`get_context`](#get_context), but it implements a specific behaviour using `with` blocks. Every keybinding added (`add`) inside this block will have the the specified context(s). Of course, the others won't.
 
 ## Examples
 
-*Coming soon...*
+### `with` block
+
+```python
+
+# You can set common contests using `with` block
+with context('selector', 'source.python', True):
+    add('.', '.', 'insert', {'characters': 'self.'})
+    add('alt+f', 'fold_python_function')
+
+# or not
+
+add('ctrl+u', 'upper_case')
+
+# You can nest some!
+
+with context('selector', 'text.markdown.html', True):
+    with context('selection_empty', False):
+        add('`', 'insert_snippet', '`$SELECTION`')
+        add('*', 'insert_snippet', '*$SELECTION*')
+
+    add('*', 'move', {'forward': True, 'by': 'characters'},
+        get_context('regex_contains', '^*', True))
+    add('`', 'move', {'forward': True, 'by': 'characters'},
+        get_context('regex_contains', '^`', True))
+
+# or add more than one context using one `with` statement
+
+with context('setting.save_on_focus_lost'), \
+     context('setting.learning_mode'):
+     add('ctrl+s', 'message_dialog',
+         {'message': 'Stop using ctrl+s, Sublime Text saves automatically for you'})
+
+```
+
+Gives:
+
+```json
+[
+    {
+        "keys": [".", "."],
+        "command": "insert",
+        "args": {
+            "characters": "self."
+        },
+        "context": [
+            {"key": "selector", "operand": "source.python", "match_all": true}
+        ]
+    },
+    {
+        "keys": ["alt+f"],
+        "command": "fold_python_function",
+        "context": [
+            {"key": "selector", "operand": "source.python", "match_all": true}
+        ]
+    },
+    {
+        "keys": ["ctrl+u"],
+        "command": "upper_case"
+    },
+    {
+        "keys": ["`"],
+        "command": "insert_snippet",
+        "args": {
+            "contents": "`$SELECTION`"
+        },
+        "context": [
+            {"key": "selector", "operand": "text.markdown.html", "match_all": true},
+            {"key": "selection_empty"}
+        ]
+    },
+    {
+        "keys": ["*"],
+        "command": "insert_snippet",
+        "args": {
+            "contents": "*$SELECTION*"
+        },
+        "context": [
+            {"key": "selector", "operand": "text.markdown.html", "match_all": true},
+            {"key": "selection_empty"}
+        ]
+    },
+    {
+        "keys": ["*"],
+        "command": "move",
+        "args": {
+            "by": "characters", 
+            "forward": true
+        },
+        "context": [
+            {"key": "selector", "operand": "text.markdown.html", "match_all": true},
+            {"key": "regex_contains", "operand": "^*", "match_all": true}
+        ]
+    },
+    {
+        "keys": ["`"],
+        "command": "move",
+        "args": {
+            "by": "characters", 
+            "forward": true
+        },
+        "context": [
+            {"key": "selector", "operand": "text.markdown.html", "match_all": true},
+            {"key": "regex_contains", "operand": "^`", "match_all": true}
+        ]
+    },
+    {
+        "keys": ["ctrl+s"],
+        "command": "message_dialog",
+        "args": {
+            "message": "Stop using ctrl+s, Sublime Text saves automatically for you"
+        },
+        "context": [
+            {"key": "setting.save_on_focus_lost"},
+            {"key": "setting.learning_mode"}
+        ]
+    }
+]
+```
+
+
 
 ## Installation
 
