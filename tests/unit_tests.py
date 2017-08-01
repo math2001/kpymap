@@ -38,7 +38,7 @@ class Testr(unittest.TestCase):
             (('key', 'operand'), {'match_all': True}, ('key', 'equal', 'operand', True)),
             (('key', 'operand'), {'match_all': True}, ('key', 'equal', 'operand', True)),
             (('key', ), {}, ('key', 'equal', True, False)),
-            (('key', ), {'match_all': True}, ('key', 'equal', True, False)),
+            (('key', ), {'match_all': True}, ('key', 'equal', True, True)),
         )
         for args, kwargs, result_args in args_and_result_args:
             self.assertEqual(to_context(*args, **kwargs), Context(*result_args))

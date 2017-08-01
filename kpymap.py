@@ -217,6 +217,9 @@ def to_context(key, operator=DEFAULT_ARG_VALUE, operand=DEFAULT_ARG_VALUE, match
     if operator == DEFAULT_ARG_VALUE:
         operator = 'equal'
 
+    if operand == DEFAULT_ARG_VALUE:
+        operand = True
+
     return Context(key, operator, operand, match_all)
 
 # APIS functions
