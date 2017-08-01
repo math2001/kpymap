@@ -208,6 +208,10 @@ def to_keybinding(*args, **kwargs):
 
 def to_context(key, operator=DEFAULT_ARG_VALUE, operand=DEFAULT_ARG_VALUE, match_all=False):
     if isinstance(key, Context):
+        if operator != DEFAULT_ARG_VALUE or operand != DEFAULT_ARG_VALUE or match_all != False:
+            error_message('Passed a context as an argument but gave extra args with it (they are '
+                          'simply ignored). Remove them to not get this warning anymore.',
+                          printout=True)
         return key
 
     if operand == DEFAULT_ARG_VALUE:
