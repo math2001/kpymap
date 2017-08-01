@@ -9,27 +9,43 @@ class Testr(unittest.TestCase):
 
     def test_to_keybinding(self):
         args_and_result_args = (
-            (('ctrl+a', 'a'),
+            (('ctrl+a', 'a'), {},
              (['ctrl+a'], 'a', {}, [])),
 
-            (('ctrl+b', 'ctrl+c', 'command'),
+            (('ctrl+b', 'ctrl+c', 'command'), {},
              (['ctrl+b', 'ctrl+c'], 'command', {}, [])),
 
-            (('ctrl+b', 'ctrl+c', 'command', {'a': 'b'}),
+            (('ctrl+b', 'ctrl+c', 'command', {'a': 'b'}), {},
              (['ctrl+b', 'ctrl+c'], 'command', {'a': 'b'}, [])),
 
-            (('ctrl+b', 'ctrl+c', 'command', {'a': 'b'}, Context('a', 'equal', 'c', True)),
+            (('ctrl+b', 'ctrl+c', 'command'), {'a': 'b'},
+             (['ctrl+b', 'ctrl+c'], 'command', {'a': 'b'}, [])),
+
+            (('ctrl+b', 'ctrl+c', 'command'), {'a': 'b', 'c': 'd'},
+             (['ctrl+b', 'ctrl+c'], 'command', {'a': 'b', 'c': 'd'}, [])),
+
+            (('ctrl+b', 'ctrl+c', 'command', {'a': 'b'}, Context('a', 'equal', 'c', True)), {},
              (['ctrl+b', 'ctrl+c'], 'command', {'a': 'b'}, [Context('a', 'equal', 'c', True)])),
 
-            (('ctrl+b', 'ctrl+c', 'command', {'a': 'b'}, Context('a', 'equal', 'c', True), Context('d', 'not_equal', 'e', False)),
+            (('ctrl+b', 'ctrl+c', 'command', Context('a', 'equal', 'c', True)), {'a': 'b'},
+             (['ctrl+b', 'ctrl+c'], 'command', {'a': 'b'}, [Context('a', 'equal', 'c', True)])),
+
+            (('ctrl+b', 'ctrl+c', 'command', {'a': 'b'}, Context('a', 'equal', 'c', True), Context('d', 'not_equal', 'e', False)), {},
              (['ctrl+b', 'ctrl+c'], 'command', {'a': 'b'}, [Context('a', 'equal', 'c', True), Context('d', 'not_equal', 'e', False)])),
 
-            (('ctrl+b', 'ctrl+c', 'command', Context('a', 'equal', 'c', True), Context('d', 'not_equal', 'e', False)),
+            (('ctrl+b', 'ctrl+c', 'command', Context('a', 'equal', 'c', True), Context('d', 'not_equal', 'e', False)), {'a': 'b'},
+             (['ctrl+b', 'ctrl+c'], 'command', {'a': 'b'}, [Context('a', 'equal', 'c', True), Context('d', 'not_equal', 'e', False)])),
+
+            (('ctrl+b', 'ctrl+c', 'command', Context('a', 'equal', 'c', True), Context('d', 'not_equal', 'e', False)), {},
              (['ctrl+b', 'ctrl+c'], 'command', {}, [Context('a', 'equal', 'c', True), Context('d', 'not_equal', 'e', False)])),
+
+            (('ctrl+b', 'ctrl+c', 'command', Context('a', 'equal', 'c', True), Context('d', 'not_equal', 'e', False)), {},
+             (['ctrl+b', 'ctrl+c'], 'command', {}, [Context('a', 'equal', 'c', True), Context('d', 'not_equal', 'e', False)])),
+
         )
 
-        for args, result_args in args_and_result_args:
-            self.assertEqual(to_keybinding(*args), Keybinding(*result_args))
+        for args, kwargs, result_args in args_and_result_args:
+            self.assertEqual(to_keybinding(*args, **kwargs), Keybinding(*result_args))
 
     def test_to_context(self):
         args_and_result_args = (
