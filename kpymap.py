@@ -178,7 +178,7 @@ def to_keybinding(*args, **kwargs):
 
     keys = []
     command = None
-    arguments = None
+    arguments = {}
     context = []
 
     if isinstance(args[-1], str):
@@ -194,10 +194,8 @@ def to_keybinding(*args, **kwargs):
             just_str = False
             if isinstance(arg, Context):
                 context.append(arg)
-            elif arguments is None:
-                arguments = arg
             else:
-                raise TypeError("This argument isn't valid {!r}".format(arg))
+                arguments.update(arg)
 
         command = keys.pop()
 

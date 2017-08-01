@@ -21,6 +21,12 @@ class Testr(unittest.TestCase):
             (('ctrl+b', 'ctrl+c', 'command'), {'a': 'b'},
              (['ctrl+b', 'ctrl+c'], 'command', {'a': 'b'}, [])),
 
+            (('ctrl+b', 'ctrl+c', 'command', {'a': 'c'}), {'a': 'b'},
+             (['ctrl+b', 'ctrl+c'], 'command', {'a': 'b'}, [])),
+
+            (('ctrl+b', 'ctrl+c', 'command', {'a': 'b'}, {'c': 'd'}), {},
+             (['ctrl+b', 'ctrl+c'], 'command', {'a': 'b', 'c': 'd'}, [])),
+
             (('ctrl+b', 'ctrl+c', 'command'), {'a': 'b', 'c': 'd'},
              (['ctrl+b', 'ctrl+c'], 'command', {'a': 'b', 'c': 'd'}, [])),
 
