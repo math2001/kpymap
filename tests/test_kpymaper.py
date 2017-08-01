@@ -23,6 +23,7 @@ add('ctrl+b', 'command', arg='value')
 add('ctrl+b', 'command', arg1='value1', arg2='value2')
 add('ctrl+b', 'command', {'arg1': 'value1', 'arg2': 'value2'})
 add('ctrl+b', 'command', {'arg': 'value'}, arg1='value1', arg2='value2')
+add('ctrl+b', 'command', {'arg': 'value'}, {'arg1': 'value1'}, arg2='value2')
 
 add('alt+c', 'command', {'arg1': 'value1', 'arg2': 'value2'}, get_context('key', 'operand', match_all=True))
 add('alt+c', 'command', {'arg1': 'value1'}, get_context('key', 'operand', match_all=True), arg2='value2')
@@ -30,9 +31,10 @@ add('ctrl+u', 'command', {'arg1': 'value1', 'arg2': 'value2'}, get_context('key'
 add('ctrl+t', 'command', {'arg1': 'value1', 'arg2': 'value2'}, get_context('key', 'operand', match_all=True), get_context('keyalone'))
 
 add('ctrl+alt+b', 'e' 'command', {'arg': 'value'})
-add('ctrl+b', 'c', 'command', {'arg1': 'value1', 'arg2': 'value2'})
+add('ctrl+b', 'c', 'command', {'arg1': 'value1'}, {'arg2': 'value2'})
+add('ctrl+b', 'c', 'command', {'arg1': 'value1'}, {'arg2': 'value2'}, arg3='value3')
 add('ctrl+c', 'alt+h', 'command', get_context('key', 'operand'))
-add('ctrl+b', 'c', 'command', {'arg1': 'value1', 'arg2': 'value2'}, get_context('key', 'operand'))
+add('ctrl+b', 'e', 'command', {'arg1': 'value1', 'arg2': 'value2'}, get_context('key', 'operand'))
 
 with context('key', 'operator', 'operand', False):
     add(':', ')', 'command', get_context('key1', 'operand'))
@@ -60,4 +62,4 @@ with open('expected-result.json', encoding='utf-8') as fp:
                                             fromfile='expected-result.json',
                                             tofile='Generated output')))
     else:
-        output("Yeah!! Everything is still working!")
+        output("Yeah!! Everything is working!")

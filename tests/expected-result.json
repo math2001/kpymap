@@ -43,6 +43,15 @@
         }
     },
     {
+        "keys": ["ctrl+b"],
+        "command": "command",
+        "args": {
+            "arg": "value",
+            "arg1": "value1",
+            "arg2": "value2"
+        }
+    },
+    {
         "keys": ["alt+c"],
         "command": "command",
         "args": {
@@ -103,6 +112,15 @@
         }
     },
     {
+        "keys": ["ctrl+b", "c"],
+        "command": "command",
+        "args": {
+            "arg1": "value1",
+            "arg2": "value2",
+            "arg3": "value3"
+        }
+    },
+    {
         "keys": ["ctrl+c", "alt+h"],
         "command": "command",
         "context": [
@@ -110,7 +128,7 @@
         ]
     },
     {
-        "keys": ["ctrl+b", "c"],
+        "keys": ["ctrl+b", "e"],
         "command": "command",
         "args": {
             "arg1": "value1",
