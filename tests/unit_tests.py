@@ -3,7 +3,7 @@
 import unittest
 import sys
 sys.path.insert(0, __file__ + '../../..')
-from kpymap import to_keybinding, Keybinding, Context
+from kpymap import to_context, to_keybinding, Keybinding, Context
 
 class Testr(unittest.TestCase):
 
@@ -31,8 +31,17 @@ class Testr(unittest.TestCase):
         for args, result_args in args_and_result_args:
             self.assertEqual(to_keybinding(*args), Keybinding(*result_args))
 
-if __name__ == '__main__':
-    unittest.main()
+    def test_to_context(self):
+        args_and_result_args = (
+            (('key', 'operator', 'operand', False), {}, ('key', 'operator', 'operand', False)),
+            (('key', 'operand'), {}, ('key', 'equal', 'operand', False)),
+            (('key', 'operand'), {'match_all': True}, ('key', 'equal', 'operand', True)),
+            (('key', 'operand'), {'match_all': True}, ('key', 'equal', 'operand', True)),
+            (('key', ), {}, ('key', 'equal', True, False)),
+            (('key', ), {'match_all': True}, ('key', 'equal', True, False)),
+        )
+        for args, kwargs, result_args in args_and_result_args:
+            self.assertEqual(to_context(*args, **kwargs), Context(*result_args))
 
-def run():
+if __name__ == '__main__':
     unittest.main()
