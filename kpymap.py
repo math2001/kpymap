@@ -174,7 +174,7 @@ class Keymap:
 
 keymap = Keymap()
 
-def to_keybinding(*args):
+def to_keybinding(*args, **kwargs):
 
     keys = []
     command = None
@@ -203,6 +203,8 @@ def to_keybinding(*args):
 
     if arguments is None:
         arguments = {}
+
+    arguments.update(kwargs)
 
     return Keybinding(keys, command, arguments, context)
 
