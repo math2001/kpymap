@@ -11,12 +11,47 @@
         }
     },
     {
-        "keys": ["ctrl+e"],
+        "keys": ["ctrl+b"],
+        "command": "command",
+        "args": {
+            "arg": "value"
+        }
+    },
+    {
+        "keys": ["ctrl+b"],
         "command": "command",
         "args": {
             "arg1": "value1",
             "arg2": "value2"
         }
+    },
+    {
+        "keys": ["ctrl+b"],
+        "command": "command",
+        "args": {
+            "arg1": "value1",
+            "arg2": "value2"
+        }
+    },
+    {
+        "keys": ["ctrl+b"],
+        "command": "command",
+        "args": {
+            "arg": "value",
+            "arg1": "value1",
+            "arg2": "value2"
+        }
+    },
+    {
+        "keys": ["alt+c"],
+        "command": "command",
+        "args": {
+            "arg1": "value1",
+            "arg2": "value2"
+        },
+        "context": [
+            {"key": "key", "operand": "operand", "match_all": true}
+        ]
     },
     {
         "keys": ["alt+c"],

@@ -19,9 +19,13 @@ reset()
 add('ctrl+a', 'command')
 
 add('ctrl+b', 'command', {'arg': 'value'})
-add('ctrl+e', 'command', {'arg1': 'value1', 'arg2': 'value2'})
+add('ctrl+b', 'command', arg='value')
+add('ctrl+b', 'command', arg1='value1', arg2='value2')
+add('ctrl+b', 'command', {'arg1': 'value1', 'arg2': 'value2'})
+add('ctrl+b', 'command', {'arg': 'value'}, arg1='value1', arg2='value2')
 
 add('alt+c', 'command', {'arg1': 'value1', 'arg2': 'value2'}, get_context('key', 'operand', match_all=True))
+add('alt+c', 'command', {'arg1': 'value1'}, get_context('key', 'operand', match_all=True), arg2='value2')
 add('ctrl+u', 'command', {'arg1': 'value1', 'arg2': 'value2'}, get_context('key', 'operator', 'operand', False))
 add('ctrl+t', 'command', {'arg1': 'value1', 'arg2': 'value2'}, get_context('key', 'operand', match_all=True), get_context('keyalone'))
 
@@ -33,6 +37,7 @@ add('ctrl+b', 'c', 'command', {'arg1': 'value1', 'arg2': 'value2'}, get_context(
 with context('key', 'operator', 'operand', False):
     add(':', ')', 'command', get_context('key1', 'operand'))
     add('alt+r', 'command', get_context('key2', 'operand'), get_context('key3', 'operand'))
+
 
 context1 = get_context('python', 'is', 'awesome')
 
