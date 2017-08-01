@@ -96,8 +96,89 @@ with context('setting.save_on_focus_lost'), \
 
 ```
 
-```json
+Gives:
 
+```json
+[
+    {
+        "keys": [".", "."],
+        "command": "insert",
+        "args": {
+            "characters": "self."
+        },
+        "context": [
+            {"key": "selector", "operand": "source.python", "match_all": true}
+        ]
+    },
+    {
+        "keys": ["alt+f"],
+        "command": "fold_python_function",
+        "context": [
+            {"key": "selector", "operand": "source.python", "match_all": true}
+        ]
+    },
+    {
+        "keys": ["ctrl+u"],
+        "command": "upper_case"
+    },
+    {
+        "keys": ["`"],
+        "command": "insert_snippet",
+        "args": {
+            "contents": "`$SELECTION`"
+        },
+        "context": [
+            {"key": "selector", "operand": "text.markdown.html", "match_all": true},
+            {"key": "selection_empty"}
+        ]
+    },
+    {
+        "keys": ["*"],
+        "command": "insert_snippet",
+        "args": {
+            "contents": "*$SELECTION*"
+        },
+        "context": [
+            {"key": "selector", "operand": "text.markdown.html", "match_all": true},
+            {"key": "selection_empty"}
+        ]
+    },
+    {
+        "keys": ["*"],
+        "command": "move",
+        "args": {
+            "by": "characters", 
+            "forward": true
+        },
+        "context": [
+            {"key": "selector", "operand": "text.markdown.html", "match_all": true},
+            {"key": "regex_contains", "operand": "^*", "match_all": true}
+        ]
+    },
+    {
+        "keys": ["`"],
+        "command": "move",
+        "args": {
+            "by": "characters", 
+            "forward": true
+        },
+        "context": [
+            {"key": "selector", "operand": "text.markdown.html", "match_all": true},
+            {"key": "regex_contains", "operand": "^`", "match_all": true}
+        ]
+    },
+    {
+        "keys": ["ctrl+s"],
+        "command": "message_dialog",
+        "args": {
+            "message": "Stop using ctrl+s, Sublime Text saves automatically for you"
+        },
+        "context": [
+            {"key": "setting.save_on_focus_lost"},
+            {"key": "setting.learning_mode"}
+        ]
+    }
+]
 ```
 
 
