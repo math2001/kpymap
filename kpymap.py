@@ -9,7 +9,6 @@ except ImportError:
     sublime = None
 from os.path import join
 from contextlib import contextmanager
-from collections import OrderedDict
 
 __all__ = ['add', 'context', 'generate', 'reset', 'get_context', 'get_keybinding']
 
@@ -103,9 +102,8 @@ class Keybinding:
         string += INDENTATION + '"command": ' + dump(self.command)
 
         if self.args != {}:
-            self.args = OrderedDict((key, self.args[key]) for key in sorted(self.args.keys()))
             string += ',\n' + INDENTATION + '"args": ' + \
-                textwrap.indent(dump(self.args, indent=INDENTATION), INDENTATION)[len(INDENTATION):]
+                textwrap.indent(dump(self.args, indent=INDENTATION, sort_keys=True), INDENTATION)[len(INDENTATION):]
 
         if self.context != []:
             string += ',\n' + INDENTATION + '"context": [\n'
