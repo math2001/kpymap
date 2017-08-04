@@ -3,7 +3,17 @@
 import unittest
 import sys
 sys.path.insert(0, __file__ + '../../..')
-from kpymap import to_context, to_keybinding, Keybinding, Context
+from kpymap import to_context, to_keybinding, Keybinding, Context, get_option, set_option
+from contextlib import contextmanager
+
+@contextmanager
+def option(option_name, option_value):
+    """Set option and then restore it automatically"""
+    default_value = get_option(option_name)
+    set_option(option_name, option_value)
+    yield
+    set_option(option_name, default_value)
+
 
 class Testr(unittest.TestCase):
 
@@ -64,6 +74,19 @@ class Testr(unittest.TestCase):
         )
         for args, kwargs, result_args in args_and_result_args:
             self.assertEqual(to_context(*args, **kwargs), Context(*result_args))
+
+    def test_to_context_with_option(self):
+        args_and_result_args = (
+            (('key', 'operator', 'operand', False), {}, ('key', 'operator', 'operand', False)),
+            (('key', 'operand'), {}, ('key', 'equal', 'operand', True)),
+            (('key', 'operand'), {'match_all': False}, ('key', 'equal', 'operand', False)),
+            (('key', 'operand'), {'match_all': True}, ('key', 'equal', 'operand', True)),
+            (('key', ), {}, ('key', 'equal', True, True)),
+            (('key', ), {'match_all': True}, ('key', 'equal', True, True)),
+        )
+        with option('match_all_default_value', True):
+            for args, kwargs, result_args in args_and_result_args:
+                self.assertEqual(to_context(*args, **kwargs), Context(*result_args))
 
 if __name__ == '__main__':
     unittest.main()
