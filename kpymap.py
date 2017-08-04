@@ -10,11 +10,17 @@ except ImportError:
 from os.path import join
 from contextlib import contextmanager
 
-__all__ = ['add', 'context', 'generate', 'reset', 'get_context', 'get_keybinding']
+__all__ = ['add', 'context', 'generate', 'reset', 'get_context', 'get_keybinding', 'set_option', 'get_option']
 
 DEFAULT_ARG_VALUE=uuid.uuid4()
 
 INDENTATION = '    '
+
+SUBLIME_TEXT_READY = False
+
+def plugin_loaded():
+    global SUBLIME_TEXT_READY
+    SUBLIME_TEXT_READY = True
 
 def dump(string, *args, **kwargs):
     return json.dumps(string, ensure_ascii=False, *args, **kwargs)
@@ -42,6 +48,20 @@ def error_message(message, printout=False):
 def remove_duplicate(seq):
     seen = set()
     return [x for x in seq if x not in seen and not seen.add(x)]
+
+class Options:
+
+    def __init__(self, **kwargs):
+        self.options = {
+            'match_all_default_value': False
+        }
+        self.options.update(kwargs)
+
+    def get(self, option_name):
+        return self.options.get(option_name, None)
+
+    def set(self, option_name, option_value):
+        self.options[option_name] = option_value
 
 class Context:
 
@@ -173,6 +193,8 @@ class Keymap:
 
 keymap = Keymap()
 
+options = Options()
+
 def to_keybinding(*args, **kwargs):
 
     keys = []
@@ -205,7 +227,7 @@ def to_keybinding(*args, **kwargs):
 
     return Keybinding(keys, command, arguments, context)
 
-def to_context(key, operator=DEFAULT_ARG_VALUE, operand=DEFAULT_ARG_VALUE, match_all=False):
+def to_context(key, operator=DEFAULT_ARG_VALUE, operand=DEFAULT_ARG_VALUE, match_all=DEFAULT_ARG_VALUE):
     if isinstance(key, Context):
         if operator != DEFAULT_ARG_VALUE or operand != DEFAULT_ARG_VALUE or match_all != False:
             error_message('Passed a context as an argument but gave extra args with it (they are '
@@ -223,9 +245,18 @@ def to_context(key, operator=DEFAULT_ARG_VALUE, operand=DEFAULT_ARG_VALUE, match
     if operand == DEFAULT_ARG_VALUE:
         operand = True
 
+    if match_all == DEFAULT_ARG_VALUE:
+        match_all = options.get('match_all_default_value')
+
     return Context(key, operator, operand, match_all)
 
 # APIS functions
+
+def get_option(option_name):
+    return options.get(option_name)
+
+def set_option(option_name, option_value):
+    return options.set(option_name, option_value)
 
 @contextmanager
 def context(*args, **kwargs):
@@ -235,6 +266,7 @@ def context(*args, **kwargs):
 
 def reset():
     keymap.__init__()
+    options.__init__()
 
 def add(*args, **kwargs):
     return keymap.add_keybinding(to_keybinding(*args, **kwargs))
@@ -250,6 +282,11 @@ def generate(return_json=False):
     if return_json is True or sublime is None:
         # the file is build, not run by ST, so just output the JSON
         return string
+
+    if not SUBLIME_TEXT_READY:
+        error_message("Sublime text isn't ready yet, cannot define emplacement of the "
+                      "keybinding target file", printout=True)
+        return
 
     keymap_file = join(sublime.packages_path(), 'User',
                        'Default ({}).sublime-keymap'.format(sublime.platform().title()))
