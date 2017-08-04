@@ -6,6 +6,9 @@
     - [`add\(keys, command\[, args\]\[, context\]\)`](#addkeys-command-args-context)
     - [`get_context\(key\[, operator\]\[, operand\]\[, match_all\]\)`](#get_contextkey-operator-operand-match_all)
     - [`context\(...\)`](#context)
+    - [`get_option\(option_name\)`](#get_optionoption_name)
+    - [`set_option\(option_name, option_value\)`](#set_optionoption_name-option_value)
+- [Options](#options)
 - [Tip](#tip)
     - [Encoding](#encoding)
     - [No updates](#no-updates)
@@ -62,6 +65,22 @@ Note: if only specify 2 arguments (such as `get_context('selector', 'source.pyth
 ### `context(...)`
 
 It takes the exact same arguments as [`get_context`](#get_context), but it implements a specific behaviour using `with` blocks. Every keybinding added (`add`) inside this block will have the the specified context(s). Of course, the others won't.
+
+### `get_option(option_name)`
+
+Gets the value of the [option](#options) `option_name`. It has to be a string.
+
+### `set_option(option_name, option_value)`
+
+Set the [option](#options) `option_name` to `option_value`. `option_name` has to be a string.
+
+## Options
+
+Here are the available options:
+
+|        Option Name        | Type | Default |                    Description                     |
+|---------------------------|------|---------|----------------------------------------------------|
+| `match_all_default_value` | bool | `False` | the `match_all` `Context`'s argument default value |
 
 ## Tip
 
