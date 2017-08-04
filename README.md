@@ -3,11 +3,11 @@
 <!-- MarkdownTOC -->
 
 - [API](#api)
-    - [`add\(keys, command\[, args\]\[, context\]\)`](#addkeys-command-args-context)
-    - [`get_context\(key\[, operator\]\[, operand\]\[, match_all\]\)`](#get_contextkey-operator-operand-match_all)
-    - [`context\(...\)`](#context)
-    - [`get_option\(option_name\)`](#get_optionoption_name)
-    - [`set_option\(option_name, option_value\)`](#set_optionoption_name-option_value)
+    - [`add(keys, command[, args][, context])`](#addkeys-command-args-context)
+    - [`get_context(key[, operator][, operand][, match_all])`](#get_contextkey-operator-operand-match_all)
+    - [`context(...)`](#context)
+    - [`get_option(option_name)`](#get_optionoption_name)
+    - [`set_option(option_name, option_value)`](#set_optionoption_name-option_value)
 - [Options](#options)
 - [Tip](#tip)
     - [Encoding](#encoding)
